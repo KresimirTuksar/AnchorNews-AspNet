@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AnchorNews.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AnchorNews.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
+        //public DbSet<NewsPost> NewsPosts { get; set; }
+        //public DbSet<Comment> Comments { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=AnchorNewsDb;Trusted_Connection=True;");
