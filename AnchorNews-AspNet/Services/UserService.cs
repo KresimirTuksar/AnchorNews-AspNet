@@ -1,5 +1,5 @@
 ﻿using AnchorNews.Data;
-using AnchorNews.Models;
+using AnchorNews_AspNet.Models.UserAuth;
 using System;
 
 namespace AnchorNews_AspNet.Services

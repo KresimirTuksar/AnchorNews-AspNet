@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace AnchorNews.Models
+namespace AnchorNews_AspNet.Models.UserAuth
 {
     public class User
     {

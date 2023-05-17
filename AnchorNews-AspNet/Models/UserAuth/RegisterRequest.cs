@@ -1,4 +1,4 @@
-﻿namespace AnchorNews_AspNet.Models
+﻿namespace AnchorNews_AspNet.Models.UserAuth
 {
     public class RegisterRequest
     {

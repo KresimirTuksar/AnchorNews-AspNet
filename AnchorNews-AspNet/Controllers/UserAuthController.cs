@@ -1,5 +1,4 @@
-﻿using AnchorNews.Models;
-using AnchorNews_AspNet.Models;
+﻿using AnchorNews_AspNet.Models.UserAuth;
 using AnchorNews_AspNet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +60,8 @@ public class UserAuthController : ControllerBase
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(Configuration["JwtSettings:ExpirationMinutes"])),
+                Issuer = user.Email,
+                Audience = user.Email,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.HmacSha256Signature)
             };
 
