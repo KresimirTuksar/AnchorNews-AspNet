@@ -10,5 +10,6 @@
         public string Category { get; set; }
         public bool IsBreakingNews { get; set; }
         public DateTime? BreakingNewsExpiration { get; set; }
+        public int ViewCount { get; set; }
     }
 }

@@ -31,10 +31,11 @@ namespace AnchorNews_AspNet.Controllers
           }
           var query = await _context.NewsPosts.ToListAsync();
             foreach (var item in query)
-            {
-                if (item.BreakingNewsExpiration < DateTime.Now)
+            {   
+                if (IsBreakingNewsExpired(item))
                 {
                     item.IsBreakingNews = false;
+                    item.BreakingNewsExpiration = null;
                 }
             }
             return query;
@@ -55,6 +56,14 @@ namespace AnchorNews_AspNet.Controllers
             {
                 return NotFound();
             }
+
+            if (IsBreakingNewsExpired(newsPost))
+            {
+                newsPost.IsBreakingNews = false;
+                newsPost.BreakingNewsExpiration = null;
+            }
+
+            IncrementViewCount(newsPost.Id);
 
             return newsPost;
         }
@@ -183,9 +192,30 @@ namespace AnchorNews_AspNet.Controllers
             return NoContent();
         }
 
+        //Hepler Methods
         private bool NewsPostExists(Guid id)
         {
             return (_context.NewsPosts?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool IsBreakingNewsExpired(Post newsPost)
+        {
+            if (newsPost.IsBreakingNews && newsPost.BreakingNewsExpiration.HasValue)
+            {
+                return newsPost.BreakingNewsExpiration.Value <= DateTime.UtcNow;
+            }
+
+            return false;
+        }
+
+        private void IncrementViewCount(Guid newsPostId)
+        {
+            var newsPost = _context.NewsPosts.FirstOrDefault(np => np.Id == newsPostId);
+            if (newsPost != null)
+            {
+                newsPost.ViewCount++;
+                _context.SaveChanges();
+            }
         }
     }
 }
