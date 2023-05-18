@@ -1,6 +1,9 @@
-﻿using AnchorNews_AspNet.Models.NewsPost;
+﻿using AnchorNews_AspNet.Models.ApiNewsPost;
+using AnchorNews_AspNet.Models.Comments;
+using AnchorNews_AspNet.Models.NewsPost;
 using AnchorNews_AspNet.Models.UserAuth;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace AnchorNews.Data
 {
@@ -8,10 +11,21 @@ namespace AnchorNews.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Post> NewsPosts { get; set; }
+        public DbSet<ApiPost> ApiNewsPosts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+
         //public DbSet<Comment> Comments { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=AnchorNewsDb;Trusted_Connection=True;");
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.NewsPost)
+                .WithMany(np => np.Comments)
+                .HasForeignKey(c => c.NewsPostId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

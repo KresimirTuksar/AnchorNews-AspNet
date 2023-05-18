@@ -4,6 +4,7 @@ using AnchorNews.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AnchorNews_AspNet.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230518111255_addApiPostTable")]
+    partial class addApiPostTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,33 +60,6 @@ namespace AnchorNews_AspNet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApiNewsPosts");
-                });
-
-            modelBuilder.Entity("AnchorNews_AspNet.Models.Comments.Comment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CommentText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CommenterName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("NewsPostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NewsPostId");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("AnchorNews_AspNet.Models.NewsPost.Post", b =>
@@ -154,22 +130,6 @@ namespace AnchorNews_AspNet.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("AnchorNews_AspNet.Models.Comments.Comment", b =>
-                {
-                    b.HasOne("AnchorNews_AspNet.Models.NewsPost.Post", "NewsPost")
-                        .WithMany("Comments")
-                        .HasForeignKey("NewsPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NewsPost");
-                });
-
-            modelBuilder.Entity("AnchorNews_AspNet.Models.NewsPost.Post", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

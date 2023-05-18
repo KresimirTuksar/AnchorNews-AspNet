@@ -5,6 +5,8 @@ using AnchorNews_AspNet.Models.NewsPost;
 using AnchorNews_AspNet.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using AnchorNews_AspNet.Models.ApiNewsPost;
+using System.Collections.Specialized;
 
 namespace AnchorNews_AspNet.Controllers
 {
@@ -14,10 +16,12 @@ namespace AnchorNews_AspNet.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly NewsPostService _newsPostService;
+        private readonly NewsApiService _newsApiService;
 
-        public NewsPostsController(ApplicationDbContext context)
+        public NewsPostsController(ApplicationDbContext context, NewsApiService newsApiService)
         {
             _context = context;
+            _newsApiService = newsApiService;
         }
 
         // GET: api/NewsPosts
@@ -155,7 +159,6 @@ namespace AnchorNews_AspNet.Controllers
             }
             Post post = new Post
             {
-                Id = new Guid(),
                 Headline = command.Headline,
                 ShortDescription = command.ShortDescription,
                 FullDescription = command.FullDescription,
@@ -191,6 +194,56 @@ namespace AnchorNews_AspNet.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        [Route("GetApiNews")]
+
+        [AllowAnonymous]
+        public async Task<IActionResult> GetNewsFromApi()
+        {
+            var apiNewsPosts = await _newsApiService.FetchNewsPostsAsync();
+
+            foreach (var post in apiNewsPosts)
+            {
+                var apiNewsPost = new ApiPost
+                {
+                    Headline = post.Title,
+                    ShortDescription = !string.IsNullOrEmpty(post.Description) ? post.Description : "" ,
+                    FullDescription = !string.IsNullOrEmpty(post.Content) ? post.Content : "",
+                    ImageUrl = !string.IsNullOrEmpty(post.UrlToImage) ? post.UrlToImage : "",
+                    Category = "API",
+                    IsBreakingNews = false
+                };
+
+                _context.ApiNewsPosts.Add(apiNewsPost);
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("GetFetchedNews")]
+
+        public async Task<ActionResult<IEnumerable<ApiPost>>> GetFetchedNews()
+        {
+            if (_context.ApiNewsPosts == null)
+            {
+                return NotFound();
+            }
+            var query = await _context.ApiNewsPosts.ToListAsync();
+            return query;
+        }
+
 
         //Hepler Methods
         private bool NewsPostExists(Guid id)

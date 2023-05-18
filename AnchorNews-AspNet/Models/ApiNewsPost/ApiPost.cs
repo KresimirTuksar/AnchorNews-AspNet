@@ -1,8 +1,9 @@
-﻿using AnchorNews_AspNet.Models.Comments;
+﻿using AnchorNews_AspNet.Models.NewsPost;
+using Microsoft.EntityFrameworkCore;
 
-namespace AnchorNews_AspNet.Models.NewsPost
+namespace AnchorNews_AspNet.Models.ApiNewsPost
 {
-    public class Post
+    public class ApiPost
     {
         public Guid Id { get; set; }
         public string Headline { get; set; }
@@ -12,8 +13,6 @@ namespace AnchorNews_AspNet.Models.NewsPost
         public string Category { get; set; }
         public bool IsBreakingNews { get; set; }
         public DateTime? BreakingNewsExpiration { get; set; }
-        public int ViewCount { get; set; }
 
-        public List<Comment> Comments { get; set; }
     }
 }

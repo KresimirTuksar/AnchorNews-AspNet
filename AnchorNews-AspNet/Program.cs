@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NewsPostService>();
+builder.Services.AddScoped<NewsApiService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
