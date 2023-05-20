@@ -29,6 +29,7 @@ builder.Services.AddDbContext<UsersDbContext>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NewsPostService>();
+builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<NewsApiService>();
 builder.Services.AddScoped<TokenService>();
 

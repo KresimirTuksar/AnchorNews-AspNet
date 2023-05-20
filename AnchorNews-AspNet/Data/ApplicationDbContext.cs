@@ -3,7 +3,6 @@ using AnchorNews_AspNet.Models.Comments;
 using AnchorNews_AspNet.Models.NewsPost;
 using AnchorNews_AspNet.Models.UserAuth;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace AnchorNews.Data
 {
