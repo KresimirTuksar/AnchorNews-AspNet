@@ -12,7 +12,7 @@ namespace AnchorNews_AspNet.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NewsPostsController : ControllerBase
+    public class NewsPostsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly NewsPostService _newsPostService;
@@ -67,14 +67,15 @@ namespace AnchorNews_AspNet.Controllers
                 newsPost.BreakingNewsExpiration = null;
             }
 
-            IncrementViewCount(newsPost.Id);
+                IncrementViewCount(newsPost.Id);
 
             return newsPost;
         }
 
         // PUT: api/NewsPosts/5
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin, Editor, Guest")]
+        [Authorize(Roles = "Admin, Editor")]
+
         public async Task<IActionResult> PutNewsPost(Guid id, NewsPostCommandRequest command)
         {
             var query = await _context.NewsPosts.FirstOrDefaultAsync(x => x.Id == id);
@@ -144,13 +145,15 @@ namespace AnchorNews_AspNet.Controllers
 
         // POST: api/NewsPosts
         [HttpPost]
-        //[Authorize(Roles = "Admin, Editor, Guest")]
+        [Authorize(Roles = "Admin, Editor")]
         public async Task<ActionResult<Post>> PostNewsPost(NewsPostCommandRequest command)
         {
-          if (_context.NewsPosts == null)
-          {
-              return Problem("Entity set 'ApplicationDbContext.NewsPosts'  is null.");
-          }
+            if (_context.NewsPosts == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.NewsPosts'  is null.");
+            }
+
+            var user = User;
             var existingBrekingNews = await _context.NewsPosts.Where(x => x.IsBreakingNews).FirstOrDefaultAsync();
 
             if (existingBrekingNews is not null && command.IsBreakingNews) { 
@@ -176,7 +179,7 @@ namespace AnchorNews_AspNet.Controllers
 
         // DELETE: api/NewsPosts/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin, Editor, Guest")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteNewsPost(Guid id)
         {
             if (_context.NewsPosts == null)
@@ -198,7 +201,7 @@ namespace AnchorNews_AspNet.Controllers
         [HttpGet]
         [Route("GetApiNews")]
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, Editor")]
         public async Task<IActionResult> GetNewsFromApi()
         {
             var apiNewsPosts = await _newsApiService.FetchNewsPostsAsync();
@@ -231,7 +234,7 @@ namespace AnchorNews_AspNet.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, Editor")]
         [Route("GetFetchedNews")]
 
         public async Task<ActionResult<IEnumerable<ApiPost>>> GetFetchedNews()

@@ -1,9 +1,14 @@
 using AnchorNews.Data;
+using AnchorNews_AspNet.Data;
 using AnchorNews_AspNet.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Configuration;
@@ -14,23 +19,48 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => {
+        var policy = new AuthorizationPolicyBuilder("Bearer").RequireAuthenticatedUser().Build();
+        opt.Filters.Add(new AuthorizeFilter(policy));
+    });
+
 builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddDbContext<UsersDbContext>();
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<NewsPostService>();
 builder.Services.AddScoped<NewsApiService>();
+builder.Services.AddScoped<TokenService>();
+
+builder.Services
+    .AddIdentityCore<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<UsersDbContext>()
+    .AddDefaultTokenProviders();
+
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
+                ClockSkew = TimeSpan.Zero,
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                //ValidateLifetime = true,
+                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = "test1@mail.com", // Replace with your issuer
-                ValidAudience = "test1@mail.com", // Replace with your audience
+                ValidIssuer = "AnchorNews_AspNet",
+                ValidAudience = "AnchorNews_AspNet",
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your_secret_key_123456key_secret_87654321")) // Replace with your secret key
             };
         });
@@ -80,6 +110,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

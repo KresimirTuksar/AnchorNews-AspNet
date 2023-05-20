@@ -5,6 +5,7 @@ using AnchorNews_AspNet.Models.UserAuth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -28,6 +29,7 @@ namespace AnchorNews_AspNet.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Comment>>> GetComments(Guid postId)
         {
             if (_context.Comments == null)
@@ -39,6 +41,7 @@ namespace AnchorNews_AspNet.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin, Editor, Guest")]
         public IActionResult AddComment(CommentRequest request)
         {
             if (!ModelState.IsValid)
@@ -79,12 +82,6 @@ namespace AnchorNews_AspNet.Controllers
             if (comment == null)
             {
                 return NotFound();
-            }
-
-            // Perform authorization check (e.g., check if the user is an admin)
-            if (!User.IsInRole("Admin"))
-            {
-                return Forbid();
             }
 
             _context.Comments.Remove(comment);
