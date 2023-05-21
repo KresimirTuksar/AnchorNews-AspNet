@@ -1,79 +1,232 @@
 ﻿using AnchorNews.Data;
+using AnchorNews_AspNet.Models.ApiNewsPost;
 using AnchorNews_AspNet.Models.NewsPost;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AnchorNews_AspNet.Services
 {
     public class NewsPostService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _context;
+        private readonly NewsApiService _newsApiService;
 
-        public NewsPostService(ApplicationDbContext dbContext)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
+        public NewsPostService(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, NewsApiService newsApiService)
         {
-            _dbContext = dbContext;
+            _context = dbContext;
+            _newsApiService = newsApiService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public Post CreateNewsPost(Post newsPost)
+        public async Task<ActionResult<Post>> CreateNewsPost(NewsPostCommandRequest request)
         {
-            // TODO: Validate and sanitize the input data for news post creation
-            // TODO: Perform authorization checks for creating news posts
+            var existingBrekingNews = await _context.NewsPosts.Where(x => x.IsBreakingNews).FirstOrDefaultAsync();
 
-            _dbContext.NewsPosts.Add(newsPost);
-            _dbContext.SaveChanges();
+            if (existingBrekingNews is not null && request.IsBreakingNews)
+            {
+                existingBrekingNews.IsBreakingNews = false;
+                existingBrekingNews.BreakingNewsExpiration = null;
+            }
+            Post post = new Post
+            {
+                Headline = request.Headline,
+                ShortDescription = request.ShortDescription,
+                FullDescription = request.FullDescription,
+                ImageUrl = request.ImageUrl,
+                Category = request.Category,
+                IsBreakingNews = request.IsBreakingNews,
+                BreakingNewsExpiration = request.IsBreakingNews ? DateTime.Now.AddHours(48) : null
+
+            };
+            _context.NewsPosts.Add(post);
+            await _context.SaveChangesAsync();
+            return post;
+        }
+
+        public async Task<ActionResult<IEnumerable<Post>>> GetAllNewsPosts()
+        {
+            var query = await _context.NewsPosts.ToListAsync();
+            foreach (var item in query)
+            {
+                if (IsBreakingNewsExpired(item))
+                {
+                    item.IsBreakingNews = false;
+                    item.BreakingNewsExpiration = null;
+                }
+            }
+
+            return query;
+
+
+        }
+
+        public async Task<ActionResult<Post>> GetNewsPostById(Guid id)
+        {
+            var newsPost = await _context.NewsPosts.FindAsync(id);
+
+            var user = _httpContextAccessor.HttpContext.User;
+
+            if (newsPost == null)
+            {
+                return new NotFoundResult();
+            }
+            if (IsBreakingNewsExpired(newsPost))
+            {
+                newsPost.IsBreakingNews = false;
+                newsPost.BreakingNewsExpiration = null;
+            }
+
+            //Admins and editors should not increment post views 
+            if (!user.IsInRole("Admin") && !user.IsInRole("Editor"))
+            {
+                IncrementViewCount(newsPost.Id);
+            }
 
             return newsPost;
+
         }
 
-        //public IEnumerable<Post> GetNewsPosts()
-        //{
-        //    // TODO: Retrieve and return the list of news posts
+        public async Task<IActionResult> EditNewsPost(Guid id, NewsPostCommandRequest request)
+        {
+            if (_context.NewsPosts == null)
+            {
+                return new BadRequestResult();
+            }
+            var query = await _context.NewsPosts.FirstOrDefaultAsync(x => x.Id == id);
 
-        //}
 
-        //public Post GetNewsPostById(int id)
-        //{
-        //     TODO: Retrieve and return a news post by its ID
-        //}
+            var existingBrekingNews = request.IsBreakingNews ? await _context.NewsPosts.FirstOrDefaultAsync(x => x.IsBreakingNews) : null;
 
-        //public Post UpdateNewsPost(int id, Post newsPost)
-        //{
-        //    // TODO: Validate and sanitize the input data for news post update
-        //    // TODO: Perform authorization checks for updating news posts
+            if (query is null)
+            {
+                return new NotFoundResult();
+            }
 
-        //    var existingNewsPost = _dbContext.NewsPosts.FirstOrDefault(np => np.Id == id);
+            if (!Equals(request.Headline, query.Headline))
+            {
+                query.Headline = request.Headline;
+            }
 
-        //    if (existingNewsPost != null)
-        //    {
-        //        existingNewsPost.Headline = newsPost.Headline;
-        //        existingNewsPost.ShortDescription = newsPost.ShortDescription;
-        //        existingNewsPost.FullDescription = newsPost.FullDescription;
-        //        existingNewsPost.ImageUrl = newsPost.ImageUrl;
-        //        existingNewsPost.Category = newsPost.Category;
-        //        existingNewsPost.IsBreakingNews = newsPost.IsBreakingNews;
+            if (!Equals(request.ShortDescription, query.ShortDescription))
+            {
+                query.ShortDescription = request.ShortDescription;
+            }
 
-        //        _dbContext.SaveChanges();
+            if (!Equals(request.FullDescription, query.FullDescription))
+            {
+                query.FullDescription = request.FullDescription;
+            }
 
-        //        return existingNewsPost;
-        //    }
+            if (!Equals(request.ImageUrl, query.ImageUrl))
+            {
+                query.ImageUrl = request.ImageUrl;
+            }
 
-        //    return null;
-        //}
+            if (!Equals(request.Category, query.Category))
+            {
+                query.Category = request.Category;
+            }
 
-        //public Post DeleteNewsPost(int id)
-        //{
-        //    // TODO: Perform authorization checks for deleting news posts
+            if (!Equals(request.IsBreakingNews, query.IsBreakingNews))
+            {
+                query.IsBreakingNews = request.IsBreakingNews;
+                query.BreakingNewsExpiration = request.IsBreakingNews ? DateTime.Now.AddHours(48) : null;
 
-        //    var existingNewsPost = _dbContext.NewsPosts.FirstOrDefault(np => np.Id == id);
+                if (existingBrekingNews is not null)
+                {
+                    existingBrekingNews.IsBreakingNews = false;
+                    existingBrekingNews.BreakingNewsExpiration = null;
+                }
+            }
 
-        //    if (existingNewsPost != null)
-        //    {
-        //        _dbContext.NewsPosts.Remove(existingNewsPost);
-        //        _dbContext.SaveChanges();
+            await _context.SaveChangesAsync();
 
-        //        return existingNewsPost;
-        //    }
+            return new OkResult();
+        }
 
-        //    return null;
-        //}
+        public async Task<IActionResult> DeleteNewsPost(Guid id)
+        {
+
+            if (_context.NewsPosts == null)
+            {
+                return new BadRequestResult();
+            }
+            var newsPost = await _context.NewsPosts.FindAsync(id);
+            if (newsPost == null)
+            {
+                return new NotFoundResult();
+            }
+
+            _context.NewsPosts.Remove(newsPost);
+            await _context.SaveChangesAsync();
+            return new OkResult();
+        }
+
+        //EXTERNAL API METHODS
+        public async Task<IActionResult> GetNewsFromApi()
+        {
+
+            if (_context.ApiNewsPosts is null)
+            {
+                return new BadRequestResult();
+            }
+            var apiNewsPosts = await _newsApiService.FetchNewsPostsAsync();
+
+            foreach (var post in apiNewsPosts)
+            {
+                var apiNewsPost = new ApiPost
+                {
+                    Headline = post.Title,
+                    ShortDescription = !string.IsNullOrEmpty(post.Description) ? post.Description : "",
+                    FullDescription = !string.IsNullOrEmpty(post.Content) ? post.Content : "",
+                    ImageUrl = !string.IsNullOrEmpty(post.UrlToImage) ? post.UrlToImage : "",
+                    Category = "API",
+                    IsBreakingNews = false
+                };
+
+                _context.ApiNewsPosts.Add(apiNewsPost);
+            }
+
+
+            return new OkResult();
+        }
+
+        public async Task<ActionResult<IEnumerable<ApiPost>>> GetFetchedNews()
+        {
+            if (_context.ApiNewsPosts == null)
+            {
+                return new BadRequestResult();
+            }
+            var query = await _context.ApiNewsPosts.ToListAsync();
+            return new OkObjectResult(query) ;
+
+        }
+
+
+        //HELPER METHODS
+        private bool IsBreakingNewsExpired(Post newsPost)
+        {
+            if (newsPost.IsBreakingNews && newsPost.BreakingNewsExpiration.HasValue)
+            {
+                return newsPost.BreakingNewsExpiration.Value <= DateTime.UtcNow;
+            }
+
+            return false;
+        }
+
+        private void IncrementViewCount(Guid newsPostId)
+        {
+            var newsPost = _context.NewsPosts.FirstOrDefault(np => np.Id == newsPostId);
+            if (newsPost != null)
+            {
+                newsPost.ViewCount++;
+                _context.SaveChanges();
+            }
+        }
+
+
     }
 }

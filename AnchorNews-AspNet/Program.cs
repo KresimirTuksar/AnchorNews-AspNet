@@ -24,6 +24,8 @@ builder.Services.AddControllers(opt => {
         opt.Filters.Add(new AuthorizeFilter(policy));
     });
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddDbContext<UsersDbContext>();
 
