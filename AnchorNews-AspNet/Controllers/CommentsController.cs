@@ -3,8 +3,6 @@ using AnchorNews_AspNet.Models.Comments;
 using AnchorNews_AspNet.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

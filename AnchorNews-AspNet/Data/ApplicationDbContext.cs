@@ -8,12 +8,10 @@ namespace AnchorNews.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Post> NewsPosts { get; set; }
         public DbSet<ApiPost> ApiNewsPosts { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
-        //public DbSet<Comment> Comments { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=AnchorNewsDb;Trusted_Connection=True;");

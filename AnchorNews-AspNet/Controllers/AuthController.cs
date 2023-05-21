@@ -4,8 +4,6 @@ using AnchorNews_AspNet.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AnchorNews_AspNet.Controllers
 {
@@ -93,7 +91,7 @@ namespace AnchorNews_AspNet.Controllers
 
 
 
-        // FOR TESTING ONLY - uncomment if needed
+        // FOR TESTING ONLY
         [HttpPost]
         [Route("createRole")]
         [AllowAnonymous]
