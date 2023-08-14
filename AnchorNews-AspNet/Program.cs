@@ -21,6 +21,8 @@ builder.Services.AddControllers(opt => {
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddCors();
+
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddDbContext<UsersDbContext>();
 
@@ -102,6 +104,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseHttpsRedirection();
 
