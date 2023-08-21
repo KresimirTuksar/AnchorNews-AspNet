@@ -20,5 +20,11 @@ namespace AnchorNews.Web.Services
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<Post>>("api/NewsPosts/getAllNewsPost");
         }
+
+        public async Task<Post> GetPostDetails(string postId)
+        {
+            return await _httpClient.GetFromJsonAsync<Post>("api/NewsPosts/getNewsPost?id=" + postId);
+        }
+
     }
 }

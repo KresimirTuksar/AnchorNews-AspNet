@@ -20,6 +20,7 @@ builder.Services.AddControllers(opt => {
     });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 builder.Services.AddCors();
 

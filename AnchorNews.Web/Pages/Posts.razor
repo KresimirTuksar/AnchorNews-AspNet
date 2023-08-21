@@ -1,0 +1,18 @@
+﻿@page "/"
+
+
+@if (PostsList == null)
+{
+    <div class="spinner"></div>
+}
+else
+{
+    <h3>News Posts</h3>
+    <div class="card-deck">
+        @foreach (var post in PostsList)
+        {
+            <PostComponent Post="post"></PostComponent>
+        }
+    </div>
+}
+

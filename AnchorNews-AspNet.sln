@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnchorNews.Api", "AnchorNews-AspNet\AnchorNews.Api.csproj", "{E421B100-ABBA-4797-92CD-399FC7445D20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnchorNews.Web", "AnchorNews.Web\AnchorNews.Web.csproj", "{3E85B809-6289-429D-99C5-BF113D089AED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnchorNews.Web", "AnchorNews.Web\AnchorNews.Web.csproj", "{3E85B809-6289-429D-99C5-BF113D089AED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnchorNews.Models", "AnchorNews.Models\AnchorNews.Models.csproj", "{EC5AFF19-41DD-4943-84CE-037B1A669B9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnchorNews.Models", "AnchorNews.Models\AnchorNews.Models.csproj", "{EC5AFF19-41DD-4943-84CE-037B1A669B9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

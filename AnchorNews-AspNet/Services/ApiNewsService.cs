@@ -1,4 +1,7 @@
 ﻿using AnchorNews_AspNet.Models.ApiNewsPost;
+using NewsAPI;
+using NewsAPI.Constants;
+using NewsAPI.Models;
 using Newtonsoft.Json;
 
 public class NewsApiService
@@ -6,28 +9,37 @@ public class NewsApiService
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
 
-    public NewsApiService()
+    public NewsApiService(HttpClient httpClient)
     {
-        _httpClient = new HttpClient();
+        //_httpClient = new HttpClient();
+        _httpClient = httpClient;
         _apiKey = "c0b69e88ffda4fdba9b00d5136cfc827";
     }
 
-    public async Task<IEnumerable<FetchedNews>> FetchNewsPostsAsync()
+    public async Task<ArticlesResult> FetchNewsPostsAsync()
     {
-        var url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=c0b69e88ffda4fdba9b00d5136cfc827";
-
-        var response = await _httpClient.GetAsync(url);
-
-        if (response.IsSuccessStatusCode)
+        var newsApiClient = new NewsApiClient("089b883722224bcb8c396f3784631fb2");
+        var articlesResponse = newsApiClient.GetEverything(new EverythingRequest
         {
-            var json = await response.Content.ReadAsStringAsync();
-            var apiResponse = JsonConvert.DeserializeObject<ApiNewsResponse>(json);
+            Q = "Apple",
+            SortBy = SortBys.Popularity,
+            Language = Languages.EN,
+            From = new DateTime(2023, 7, 25)
+        });
+        //var url = "https://newsapi.org/v2/everything?q=tesla&from=2023-07-16&sortBy=publishedAt&apiKey=089b883722224bcb8c396f3784631fb2";
 
-            return apiResponse.Articles;
-        }
+        //var response = await _httpClient.GetAsync(url);
 
-        // Handle error scenarios
+        //if (response.IsSuccessStatusCode)
+        //{
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    var apiResponse = JsonConvert.DeserializeObject<ApiNewsResponse>(json);
 
-        return Enumerable.Empty<FetchedNews>();
+        //    return articlesResponse;
+        //}
+
+        //// Handle error scenarios
+
+        return articlesResponse;
     }
 }

@@ -169,15 +169,15 @@ namespace AnchorNews_AspNet.Services
         public async Task<IActionResult> GetNewsFromApi()
         {
 
-            if (_context.ApiNewsPosts is null)
+            if (_context.NewsPosts is null)
             {
                 return new BadRequestResult();
             }
             var apiNewsPosts = await _newsApiService.FetchNewsPostsAsync();
 
-            foreach (var post in apiNewsPosts)
+            foreach (var post in apiNewsPosts.Articles)
             {
-                var apiNewsPost = new ApiPost
+                var apiNewsPost = new Post
                 {
                     Headline = post.Title,
                     ShortDescription = !string.IsNullOrEmpty(post.Description) ? post.Description : "",
@@ -187,8 +187,9 @@ namespace AnchorNews_AspNet.Services
                     IsBreakingNews = false
                 };
 
-                _context.ApiNewsPosts.Add(apiNewsPost);
+                _context.NewsPosts.Add(apiNewsPost);
             }
+            _context.SaveChangesAsync();
 
 
             return new OkResult();
@@ -201,7 +202,7 @@ namespace AnchorNews_AspNet.Services
                 return new BadRequestResult();
             }
             var query = await _context.ApiNewsPosts.ToListAsync();
-            return new OkObjectResult(query) ;
+            return new OkObjectResult(query);
 
         }
 

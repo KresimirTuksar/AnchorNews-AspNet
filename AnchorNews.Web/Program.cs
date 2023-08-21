@@ -17,6 +17,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddScoped<IAnchorNewsService, AnchorNewsService>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
 
 var baseUrl = configuration.GetValue<string>("ApiSettings:BaseUrl");
 
