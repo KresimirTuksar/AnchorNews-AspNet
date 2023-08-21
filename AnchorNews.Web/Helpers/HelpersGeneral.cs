@@ -10,7 +10,7 @@
 
             if (timeSpan.TotalMilliseconds < 1000)
             {
-                return "Less than a second";
+                return "Less than a second ago";
             }
             else if (timeSpan.TotalMinutes < 1)
             {
@@ -23,6 +23,10 @@
             else if (timeSpan.TotalDays < 1)
             {
                 return $"{(int)timeSpan.TotalHours} hours ago";
+            }
+            else if (timeSpan.TotalDays >= 1 && timeSpan.TotalDays < 2 )
+            {
+                return $"{(int)timeSpan.TotalDays} day ago";
             }
             else if (timeSpan.TotalDays < 7)
             {
