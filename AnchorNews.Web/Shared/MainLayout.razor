@@ -9,7 +9,18 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+
+
+            <AuthorizeView>
+                <Authorized>
+                    <p>Hello, @context.User.Identity?.Name!</p>
+                    <button type="button" class="btn btn-danger ml-md-auto" @onclick="@LogoutClick">Logout</button>
+                </Authorized>
+                <NotAuthorized>
+                    <button type="button" class="btn btn-success ml-md-auto" @onclick="@RegisterClick">Register</button>
+                    <button type="button" class="btn btn-primary ml-md-auto" @onclick="@LoginClick">Login</button>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">

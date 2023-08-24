@@ -9,10 +9,9 @@ namespace AnchorNews_AspNet.Services
 {
     public class TokenService
     {
-        private const int ExpirationMinutes = 30;
         public string CreateToken(IdentityUser user, IList<string> roles)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(ExpirationMinutes);
+            var expiration = DateTime.UtcNow.AddHours(1);
             var token = CreateJwtToken(
                 CreateClaims(user, roles),
                 CreateSigningCredentials(),

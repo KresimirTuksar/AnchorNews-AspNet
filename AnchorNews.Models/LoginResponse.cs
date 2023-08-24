@@ -1,7 +1,9 @@
-﻿namespace AnchorNews_AspNet.Models.Auth
+﻿
+namespace AnchorNews.Models
 {
-    public class AuthResponse
+    public class LoginResponse
     {
+
         public string UserId { get; set; } = null;
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;

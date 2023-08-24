@@ -65,12 +65,12 @@ namespace AnchorNews_AspNet.Controllers
             var managedUser = await _userManager.FindByEmailAsync(request.Email);
             if (managedUser == null)
             {
-                return BadRequest("Bad credentials");
+                return BadRequest("User does not exist");
             }
             var isPasswordValid = await _userManager.CheckPasswordAsync(managedUser, request.Password);
             if (!isPasswordValid)
             {
-                return BadRequest("Bad credentials");
+                return BadRequest("Invalid password");
             }
             var userInDb = _context.Users.FirstOrDefault(u => u.Email == request.Email);
             if (userInDb is null)
@@ -83,10 +83,13 @@ namespace AnchorNews_AspNet.Controllers
             await _context.SaveChangesAsync();
             return Ok(new AuthResponse
             {
+                UserId = userInDb.Id,
                 Username = userInDb.UserName,
                 Email = userInDb.Email,
+                Roles = (List<string>)roles,
                 Token = accessToken,
-            });
+                Expiration = DateTime.UtcNow.AddHours(1)
+            }); ;
         }
 
 
