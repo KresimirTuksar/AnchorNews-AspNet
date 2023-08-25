@@ -12,22 +12,41 @@ else
             <img src="@Post.ImageUrl" alt="img" />
             <p class="post-body">@Post.FullDescription</p>
 
+            <AuthorizeView>
+                <Authorized>
+                    <AddCommentComponent PostId="@PostId"></AddCommentComponent>
+                </Authorized>
+                <NotAuthorized>
+                    <p>please login or register</p>
+                </NotAuthorized>
+            </AuthorizeView>
             <div class="comments-count">
                 <span>Comments </span>
-                <span class="count">@string.Format("( " + Comments.Count() + " )")</span>
+                @if (Comments != null)
+                {
+                    <span class="count">@string.Format("( " + Comments.Count() + " )")</span>
+                }
             </div>
-            @if (Comments.Count() > 0)
+
+            @if (isLoading)
             {
-                <div class="comments-list">
-                    @foreach (var comment in Comments)
-                    {
-                        <CommentComponent Comment="comment"></CommentComponent>
-                    }
-                </div>
+                <div class="spinner"></div>
             }
             else
             {
-                <span>No Comments</span>
+                @if (Comments != null && Comments.Count() > 0)
+                {
+                    <div class="comments-list">
+                        @foreach (var comment in Comments)
+                        {
+                            <CommentComponent Comment="comment"></CommentComponent>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <span>No Comments</span>
+                }
             }
         </div>
     </div>

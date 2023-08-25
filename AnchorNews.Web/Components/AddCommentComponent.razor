@@ -1,0 +1,17 @@
+﻿@*<EditForm class="form-comment" OnValidSubmit="OnSubmit" Model="commentRequest">
+    <DataAnnotationsValidator />
+
+    <InputText id="commentText" class="form-control" @bind-Value="commentRequest.CommentText" @bind-Value:event="oninput" autofocus placeholder="Comment..." />
+    <ValidationMessage For="@(() => commentRequest.CommentText)" />
+
+    <button class="btn btn-lg btn-primary btn-block" disabled=@string.IsNullOrWhiteSpace(commentRequest.CommentText) type="submit">Post</button>
+
+    <label class="text-danger">@error</label>
+
+</EditForm>*@
+
+<div>
+    <input type="" @bind=commentRequest.CommentText @bind:event="oninput" />
+    <span class="error" hidden="@string.IsNullOrEmpty(error)" >@error</span>
+    <button type="button" disabled=@string.IsNullOrWhiteSpace(commentRequest.CommentText) @onclick="OnSubmit">Post</button>
+</div>

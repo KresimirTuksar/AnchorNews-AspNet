@@ -26,7 +26,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredServic
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAnchorNewsService, AnchorNewsService>();
-builder.Services.AddScoped<ICommentsService, CommentsService>();
+builder.Services.AddScoped<CommentsService>();
 
 var baseUrl = configuration.GetValue<string>("ApiSettings:BaseUrl");
 
