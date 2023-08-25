@@ -6,5 +6,6 @@ namespace AnchorNews.Web.Services
     {
         Task<IEnumerable<Post>> GetAllPosts();
         Task<Post> GetPostDetails(string postId);
+        Task AddPost(AddPostRequest AddPostRequest);
     }
 }

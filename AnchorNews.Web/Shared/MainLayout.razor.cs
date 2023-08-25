@@ -28,6 +28,11 @@ namespace AnchorNews.Web.Shared
             navigationManager.NavigateTo("/register");
         }
 
+        async Task NewPostClick()
+        {
+            navigationManager.NavigateTo("/addNewsPost");
+        }
+
     }
 }
 

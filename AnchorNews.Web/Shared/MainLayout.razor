@@ -14,6 +14,11 @@
             <AuthorizeView>
                 <Authorized>
                     <p>Hello, @context.User.Identity?.Name!</p>
+                    @if (context.User.IsInRole("Admin") || context.User.IsInRole("Editor"))
+                    {
+                        <button type="button" class="btn btn-danger ml-md-auto" @onclick="@NewPostClick">Create New Post</button>
+
+                    }
                     <button type="button" class="btn btn-danger ml-md-auto" @onclick="@LogoutClick">Logout</button>
                 </Authorized>
                 <NotAuthorized>

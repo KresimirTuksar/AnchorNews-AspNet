@@ -1,0 +1,36 @@
+﻿@page "/addNewsPost"
+
+<EditForm class="form-addPost" OnValidSubmit="@OnSubmit" EditContext="@editContext">
+    <DataAnnotationsValidator />
+
+    <label for="headline" class="sr-only">Headline</label>
+    <InputText id="headline" class="form-control" @bind-Value="addPostRequest.Headline"  autofocus placeholder="Headline..." />
+    <ValidationMessage For="@(() => addPostRequest.Headline)" />
+
+    <label for="imageUrl" class="sr-only">Image Url</label>
+    <InputText id="imageUrl" class="form-control" @bind-Value="addPostRequest.ImageUrl"  autofocus placeholder="Image Url..." />
+    <ValidationMessage For="@(() => addPostRequest.ImageUrl)" />
+
+    <label for="shortDescription" class="sr-only">Short Description</label>
+    <InputText id="shortDescription" class="form-control" @bind-Value="addPostRequest.ShortDescription"  autofocus placeholder="Short Description..." />
+    <ValidationMessage For="@(() => addPostRequest.ShortDescription)" />
+
+    <label for="fullDescription" class="sr-only">Full Description</label>
+    <InputText id="fullDescription" class="form-control" @bind-Value="addPostRequest.FullDescription"  autofocus placeholder="Full Description..." />
+    <ValidationMessage For="@(() => addPostRequest.FullDescription)" />
+
+    <label for="category" class="sr-only">Category</label>
+    <InputText id="category" class="form-control" @bind-Value="addPostRequest.Category"  autofocus placeholder="Category..." />
+    <ValidationMessage For="@(() => addPostRequest.Category)" />
+
+    <div class="form-check m-3">
+        <InputCheckbox id="breakingNews" class="form-check-input" @bind-Value="@addPostRequest.IsBreakingNews"  />
+        <label class="form-check-label" for="breakingNews">IsBreakingNews</label>
+    </div>
+
+
+    <button class="btn btn-lg btn-primary btn-block" disabled="@formInvalid" type="submit">Post</button>
+
+    <label class="text-danger">@error</label>
+
+</EditForm>

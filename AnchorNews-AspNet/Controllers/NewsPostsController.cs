@@ -52,8 +52,7 @@ namespace AnchorNews_AspNet.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        //[Authorize(Roles = "Admin, Editor")]
+        [Authorize(Roles = "Admin, Editor")]
         [Route("createNewsPost")]
         public async Task<ActionResult<Post>> CreateNewsPost(NewsPostCommandRequest command)
         {
