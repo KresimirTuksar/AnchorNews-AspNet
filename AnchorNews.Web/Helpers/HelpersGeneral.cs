@@ -16,10 +16,19 @@
             {
                 return $"{(int)timeSpan.TotalSeconds} seconds ago";
             }
+            else if (timeSpan.TotalMinutes >= 1 && timeSpan.TotalMinutes < 2)
+            {
+                return $"{(int)timeSpan.TotalMinutes} minute ago";
+            }
             else if (timeSpan.TotalHours < 1)
             {
                 return $"{(int)timeSpan.TotalMinutes} minutes ago";
             }
+            else if (timeSpan.TotalHours >= 1 && timeSpan.TotalHours < 2)
+            {
+                return $"{(int)timeSpan.TotalHours} hour ago";
+            }
+
             else if (timeSpan.TotalDays < 1)
             {
                 return $"{(int)timeSpan.TotalHours} hours ago";

@@ -8,12 +8,13 @@ namespace AnchorNews.Web.Components
     {
         [Parameter]
         public Comment Comment { get; set; }
+        public string humanizedTime { get; set; }
 
-        public string humanizedTime;
-
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
             humanizedTime = HelpersGeneral.HumanizeTime(Comment.Timestamp);
+            StateHasChanged();
+
         }
     }
 }
