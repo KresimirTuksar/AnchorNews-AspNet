@@ -6,6 +6,8 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
+using Microsoft.Extensions.ObjectPool;
 
 namespace AnchorNews.Web.Providers
 {
@@ -25,9 +27,9 @@ namespace AnchorNews.Web.Providers
         {
             var userData = await _localStorage.GetItem<LoginResponse>("userData");
 
-            var token = await _localStorage.GetItem<string>("authToken");
-            if (!string.IsNullOrWhiteSpace(token) && userData is not null)
+            if (userData is not null && userData.Expiration > DateTime.UtcNow)
             {
+                var token = await _localStorage.GetItem<string>("authToken");
                 List<Claim> claims = new List<Claim> {
                         new Claim(ClaimTypes.NameIdentifier, userData.UserId),
                         new Claim(ClaimTypes.Email, userData.Email),
@@ -43,8 +45,11 @@ namespace AnchorNews.Web.Providers
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                 return new AuthenticationState(user);
             }
-
-            return new AuthenticationState(new ClaimsPrincipal());
+            else
+            {
+                await _localStorage.RemoveItem("authToken");
+                return new AuthenticationState(new ClaimsPrincipal());
+            }
         }
 
         public async Task Logout()
