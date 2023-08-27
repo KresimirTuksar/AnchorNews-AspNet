@@ -4,7 +4,7 @@
     <DataAnnotationsValidator />
 
     <label for="headline" class="sr-only">Headline</label>
-    <InputText id="headline" class="form-control" @bind-Value="addPostRequest.Headline"  autofocus placeholder="Headline..." />
+    <InputText id="headline" class="form-control" @bind-Value="addPostRequest.Headline" max autofocus placeholder="Headline..." />
     <ValidationMessage For="@(() => addPostRequest.Headline)" />
 
     <label for="imageUrl" class="sr-only">Image Url</label>
@@ -12,11 +12,11 @@
     <ValidationMessage For="@(() => addPostRequest.ImageUrl)" />
 
     <label for="shortDescription" class="sr-only">Short Description</label>
-    <InputText id="shortDescription" class="form-control" @bind-Value="addPostRequest.ShortDescription"  autofocus placeholder="Short Description..." />
+    <InputTextArea id="shortDescription" class="form-control post-text" @bind-Value="addPostRequest.ShortDescription" rows="3" maxlength="250" autofocus placeholder="Short Description..." />
     <ValidationMessage For="@(() => addPostRequest.ShortDescription)" />
 
     <label for="fullDescription" class="sr-only">Full Description</label>
-    <InputText id="fullDescription" class="form-control" @bind-Value="addPostRequest.FullDescription"  autofocus placeholder="Full Description..." />
+    <InputTextArea id="fullDescription" class="form-control post-text" @bind-Value="addPostRequest.FullDescription" rows="6" autofocus placeholder="Full Description..." />
     <ValidationMessage For="@(() => addPostRequest.FullDescription)" />
 
     <label for="category" class="sr-only">Category</label>
@@ -29,7 +29,7 @@
     </div>
 
 
-    <button class="btn btn-lg btn-primary btn-block" disabled="@formInvalid" type="submit">Post</button>
+    <button class="btn btn-lg btn-primary btn-block ms-auto" disabled="@formInvalid" type="submit">Post</button>
 
     <label class="text-danger">@error</label>
 

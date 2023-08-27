@@ -35,6 +35,10 @@ namespace AnchorNews.Web.Components
             }
 
         }
+        protected async void OnCancel()
+        {
+            commentRequest.CommentText = null;
+        }
 
     }
 

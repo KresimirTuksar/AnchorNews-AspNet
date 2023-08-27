@@ -13,17 +13,22 @@
 
             <AuthorizeView>
                 <Authorized>
-                    <p>Hello, @context.User.Identity?.Name!</p>
-                    @if (context.User.IsInRole("Admin") || context.User.IsInRole("Editor"))
-                    {
-                        <button type="button" class="btn btn-danger ml-md-auto" @onclick="@NewPostClick">Create New Post</button>
+                    <p style="margin-top:auto">Hello, @context.User.Identity?.Name!</p>
+                    <div class="top-row-buttons">
+                        @if (context.User.IsInRole("Admin") || context.User.IsInRole("Editor"))
+                        {
+                            <button type="button" class="btn btn-success ml-md-auto" @onclick="@NewPostClick">Create New Post</button>
 
-                    }
-                    <button type="button" class="btn btn-danger ml-md-auto" @onclick="@LogoutClick">Logout</button>
+                        }
+                        <button type="button" class="btn btn-danger ml-md-auto" @onclick="@LogoutClick">Logout</button>
+                    </div>
                 </Authorized>
                 <NotAuthorized>
-                    <button type="button" class="btn btn-success ml-md-auto" @onclick="@RegisterClick">Register</button>
-                    <button type="button" class="btn btn-primary ml-md-auto" @onclick="@LoginClick">Login</button>
+                    <div></div>
+                    <div class="top-row-buttons">
+                        <button type="button" class="btn btn-success ml-md-auto" @onclick="@RegisterClick">Register</button>
+                        <button type="button" class="btn btn-primary ml-md-auto" @onclick="@LoginClick">Login</button>
+                    </div>
                 </NotAuthorized>
             </AuthorizeView>
         </div>
